@@ -27,6 +27,7 @@ A full-stack Event Management Website built with the MERN stack (MongoDB, Expres
 - **Bcrypt** - Password hashing
 - **Cloudinary** - Image storage
 - **Multer** - File upload handling
+- **Express Rate Limit** - API rate limiting
 
 ### Frontend
 - **React.js** - UI library
@@ -34,6 +35,19 @@ A full-stack Event Management Website built with the MERN stack (MongoDB, Expres
 - **Axios** - HTTP client
 - **React Toastify** - Notifications
 - **Vite** - Build tool
+
+## Security
+
+This application implements comprehensive security measures including:
+- ✅ JWT authentication with bcrypt password hashing
+- ✅ Rate limiting on all routes
+- ✅ Input validation and sanitization
+- ✅ MongoDB ObjectId validation
+- ✅ File upload restrictions (type and size)
+- ✅ Protected admin routes
+- ✅ CORS configuration
+
+For detailed security information, see [SECURITY.md](SECURITY.md).
 
 ## Project Structure
 
