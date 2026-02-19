@@ -10,12 +10,13 @@ const {
 } = require('../controllers/uploadController');
 const { protect } = require('../middleware/authMiddleware');
 const { upload } = require('../config/cloudinary');
+const { uploadLimiter, apiLimiter } = require('../middleware/rateLimitMiddleware');
 
-router.post('/', upload.single('image'), uploadImage);
-router.get('/', protect, getAllUploads);
-router.get('/event/:eventId', getUploadsByEvent);
-router.patch('/:id/approve', protect, approveImage);
-router.patch('/:id/reject', protect, rejectImage);
-router.delete('/:id', protect, deleteImage);
+router.post('/', uploadLimiter, upload.single('image'), uploadImage);
+router.get('/', protect, apiLimiter, getAllUploads);
+router.get('/event/:eventId', apiLimiter, getUploadsByEvent);
+router.patch('/:id/approve', protect, apiLimiter, approveImage);
+router.patch('/:id/reject', protect, apiLimiter, rejectImage);
+router.delete('/:id', protect, apiLimiter, deleteImage);
 
 module.exports = router;

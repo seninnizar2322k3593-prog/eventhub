@@ -8,12 +8,13 @@ const {
   deleteEvent,
 } = require('../controllers/eventController');
 const { protect } = require('../middleware/authMiddleware');
+const { apiLimiter } = require('../middleware/rateLimitMiddleware');
 
-router.route('/').get(getEvents).post(protect, createEvent);
+router.route('/').get(apiLimiter, getEvents).post(protect, apiLimiter, createEvent);
 router
   .route('/:id')
-  .get(getEventById)
-  .put(protect, updateEvent)
-  .delete(protect, deleteEvent);
+  .get(apiLimiter, getEventById)
+  .put(protect, apiLimiter, updateEvent)
+  .delete(protect, apiLimiter, deleteEvent);
 
 module.exports = router;

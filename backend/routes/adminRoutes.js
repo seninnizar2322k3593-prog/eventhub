@@ -6,9 +6,10 @@ const {
   verifyAdmin,
 } = require('../controllers/adminController');
 const { protect } = require('../middleware/authMiddleware');
+const { authLimiter, apiLimiter } = require('../middleware/rateLimitMiddleware');
 
-router.post('/register', registerAdmin);
-router.post('/login', loginAdmin);
-router.get('/verify', protect, verifyAdmin);
+router.post('/register', authLimiter, registerAdmin);
+router.post('/login', authLimiter, loginAdmin);
+router.get('/verify', apiLimiter, protect, verifyAdmin);
 
 module.exports = router;
