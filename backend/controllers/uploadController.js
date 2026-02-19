@@ -1,5 +1,7 @@
 const ImageUpload = require('../models/ImageUpload');
+const Event = require('../models/Event');
 const { cloudinary } = require('../config/cloudinary');
+const mongoose = require('mongoose');
 
 // @desc    Upload image
 // @route   POST /api/uploads
@@ -10,6 +12,17 @@ const uploadImage = async (req, res) => {
 
     if (!eventId) {
       return res.status(400).json({ message: 'Event ID is required' });
+    }
+
+    // Validate eventId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: 'Invalid Event ID' });
+    }
+
+    // Check if event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
     }
 
     if (!req.file) {
@@ -43,6 +56,10 @@ const getAllUploads = async (req, res) => {
     }
 
     if (eventId) {
+      // Validate eventId is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(eventId)) {
+        return res.status(400).json({ message: 'Invalid Event ID' });
+      }
       query.eventId = eventId;
     }
 
@@ -62,6 +79,11 @@ const getAllUploads = async (req, res) => {
 // @access  Public
 const getUploadsByEvent = async (req, res) => {
   try {
+    // Validate eventId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.eventId)) {
+      return res.status(400).json({ message: 'Invalid Event ID' });
+    }
+
     const uploads = await ImageUpload.find({
       eventId: req.params.eventId,
       status: 'approved', // Only show approved images publicly
@@ -78,6 +100,11 @@ const getUploadsByEvent = async (req, res) => {
 // @access  Private (Admin only)
 const approveImage = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Upload ID' });
+    }
+
     const upload = await ImageUpload.findById(req.params.id);
 
     if (!upload) {
@@ -101,6 +128,11 @@ const approveImage = async (req, res) => {
 // @access  Private (Admin only)
 const rejectImage = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Upload ID' });
+    }
+
     const upload = await ImageUpload.findById(req.params.id);
 
     if (!upload) {
@@ -124,6 +156,11 @@ const rejectImage = async (req, res) => {
 // @access  Private (Admin only)
 const deleteImage = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Upload ID' });
+    }
+
     const upload = await ImageUpload.findById(req.params.id);
 
     if (!upload) {

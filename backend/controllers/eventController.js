@@ -1,4 +1,5 @@
 const Event = require('../models/Event');
+const mongoose = require('mongoose');
 
 // @desc    Get all events
 // @route   GET /api/events
@@ -17,9 +18,11 @@ const getEvents = async (req, res) => {
     }
 
     if (search) {
+      // Limit search string length to prevent ReDoS attacks
+      const sanitizedSearch = search.substring(0, 100);
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+        { title: { $regex: sanitizedSearch, $options: 'i' } },
+        { description: { $regex: sanitizedSearch, $options: 'i' } },
       ];
     }
 
@@ -38,6 +41,11 @@ const getEvents = async (req, res) => {
 // @access  Public
 const getEventById = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Event ID' });
+    }
+
     const event = await Event.findById(req.params.id).populate(
       'createdBy',
       'name email'
@@ -87,6 +95,11 @@ const createEvent = async (req, res) => {
 // @access  Private (Admin only)
 const updateEvent = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Event ID' });
+    }
+
     const event = await Event.findById(req.params.id);
 
     if (!event) {
@@ -117,6 +130,11 @@ const updateEvent = async (req, res) => {
 // @access  Private (Admin only)
 const deleteEvent = async (req, res) => {
   try {
+    // Validate id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid Event ID' });
+    }
+
     const event = await Event.findById(req.params.id);
 
     if (!event) {
